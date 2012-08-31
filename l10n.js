@@ -30,6 +30,7 @@ var gL10nData = {};
 var gTextData = '';
 var gTextProp = 'textContent';
 var gLanguage = '';
+var gLoader = null; // resource loader function.
 var gMacros = {};
 var gReadyState = 'loading';
 
@@ -783,4 +784,37 @@ function substArguments(str, args) {
   return str;
 }
 
+module.exports = {
+  // initialise the module.
+  // loader should be a function(path, onSuccess, onFailure, asynchronous)
+  init: function(loader) {
+    if (typeof loader == function) {
+      gLoader=loader;
+    } else {
+      console.warn('Resource loader is not a function');
+    }
+  },
+  // load a resource for a given language from a path.
+  loadResource: function(path,lang){
+    // call parseResource to do the work.
+  },
+  get: function(key,args,fallback) {
+    var data = getL10nData(key, args) || fallback;
+    if (data) { // XXX double-check this
+      return 'textContent' in data ? data.textContent : '';
+    }
+    return '{{' + key + '}}';
+  },
+  getData: function() { return gL10nData;},
+  getText: function() { return gTextData;},
+  // get the direction (ltr|rtl) of the current language
+  getDirection: function() {
+    // http://www.w3.org/International/questions/qa-scripts
+    // Arabic, Hebrew, Farsi, Pashto, Urdu
+    var rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
+    return (rtlList.indexOf(gLanguage) >= 0) ? 'rtl' : 'ltr';
+  },
+  getReadyState: function() { return gReadyState; }
+}
+                                 },
 
