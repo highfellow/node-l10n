@@ -19,13 +19,13 @@
   * IN THE SOFTWARE.
   */
 
-/** Modified for nodejs by Andrew Baxter <andy@highfellow.org>, Aug 2012
- *
- */
+/**
+ * Modified for nodejs by Andrew Baxter <andy@highfellow.org>, Aug 2012
+ **/
+
 /*jshint browser: true, devel: true, es5: true, globalstrict: true */
 'use strict';
 
-//document.webL10n = (function(window, document, undefined) {
 var gL10nData = {};
 var gTextData = '';
 var gTextProp = 'textContent';
@@ -33,7 +33,6 @@ var gLanguage = '';
 var gLoader = null; // resource loader function.
 var gMacros = {};
 var gReadyState = 'loading';
-var gBasePath = ''; // base path to use when loading resources.
 
 // read-only setting -- we recommend to load l10n resources synchronously
 var gAsyncResourceLoading = true;
@@ -153,7 +152,7 @@ function parseResource(href, lang, successCallback, failureCallback) {
   }
 
   // load and parse l10n data (warning: global variables are used here)
-  // uses the loader function gLoader which was defined in init(basePath, loader)
+  // uses the loader function gLoader which was defined in init(loader)
   gLoader(href, function(response) {
     gTextData += response; // mostly for debug
 
@@ -713,7 +712,7 @@ function substArguments(str, args) {
 
 module.exports = {
   // initialise the module.
-  // loader should be a function(path, onSuccess, onFailure, asynchronous)
+  // loader should be a function(path, onSuccess, onFailure, asynchronous). See test/test.js for an example using node filesystem.
   init: function(loader) {
     gLoader = loader;
   },

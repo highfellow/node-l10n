@@ -5,6 +5,7 @@
 l10n = require('../l10n.js');
 fs = require('fs');
 
+// run through plurals using a given adjective.
 function repeat(adjKey) {
   adj=l10n.get(adjKey,{},'colour');
   for (var n = 0; n < 4; n++) {
@@ -32,6 +33,7 @@ function testLanguage(lang, callback) {
 l10n.init(function(path,success,failure,async) {
   path = './' + path;
   if (async) {
+    // load the resource asynchronously.
     fs.readFile(path, 'utf-8', function(err, data) {
       if (err) {
         failure && failure();
@@ -40,6 +42,7 @@ l10n.init(function(path,success,failure,async) {
       }
     });
   } else {
+    // load synchronously (used for includes).
     data = fs.readFileSync(path, 'utf-8');
     if (data && (data != '')) {
       success(data);
