@@ -33,6 +33,7 @@ var gLanguage = '';
 var gLoader = null; // resource loader function.
 var gMacros = {};
 var gReadyState = 'loading';
+var gBasePath = ''; // base path to use when loading resources.
 
 // read-only setting -- we recommend to load l10n resources synchronously
 var gAsyncResourceLoading = true;
@@ -72,7 +73,6 @@ function consoleWarn(message) {
  */
 
 function parseResource(href, lang, successCallback, failureCallback) {
-  var baseURL = href.replace(/\/[^\/]*$/, '/');
 
   // handle escaped characters (backslashes) in a string
   function evalString(text) {
@@ -129,7 +129,7 @@ function parseResource(href, lang, successCallback, failureCallback) {
           }
           if (reImport.test(line)) { // @import rule?
             match = reImport.exec(line);
-            loadImport(baseURL + match[1]); // load the resource synchronously
+            loadImport(gBasePath + match[1]); // load the resource synchronously
           }
         }
 
@@ -152,29 +152,9 @@ function parseResource(href, lang, successCallback, failureCallback) {
     return dictionary;
   }
 
-  // load the specified resource file
-  function loadResource(url, onSuccess, onFailure, asynchronous) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, asynchronous);
-    if (xhr.overrideMimeType) {
-      xhr.overrideMimeType('text/plain; charset=utf-8');
-    }
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-        if (xhr.status == 200 || xhr.status === 0) {
-          if (onSuccess)
-            onSuccess(xhr.responseText);
-        } else {
-          if (onFailure)
-            onFailure();
-        }
-      }
-    };
-    xhr.send(null);
-  }
-
   // load and parse l10n data (warning: global variables are used here)
-  loadResource(href, function(response) {
+  // uses the loader function gLoader which was defined in init(basePath, loader)
+  gLoader(href, function(response) {
     gTextData += response; // mostly for debug
 
     // parse *.properties text data into an l10n dictionary
@@ -201,59 +181,6 @@ function parseResource(href, lang, successCallback, failureCallback) {
       successCallback();
   }, failureCallback, gAsyncResourceLoading);
 };
-
-// load and parse all resources for the specified locale
-function loadLocale(lang, callback) {
-  clear();
-  gLanguage = lang;
-
-  // check all <link type="application/l10n" href="..." /> nodes
-  // and load the resource files
-  var langLinks = getL10nResourceLinks();
-  var langCount = langLinks.length;
-  if (langCount == 0) {
-    consoleLog('no resource to load, early way out');
-    fireL10nReadyEvent(lang);
-    gReadyState = 'complete';
-    return;
-  }
-
-  // start the callback when all resources are loaded
-  var onResourceLoaded = null;
-  var gResourceCount = 0;
-  onResourceLoaded = function() {
-    gResourceCount++;
-    if (gResourceCount >= langCount) {
-      if (callback) // execute the [optional] callback
-        callback();
-      fireL10nReadyEvent(lang);
-      gReadyState = 'complete';
-    }
-  };
-
-  // load all resource files
-  function l10nResourceLink(link) {
-    var href = link.href;
-    var type = link.type;
-    this.load = function(lang, callback) {
-      var applied = lang;
-      parseResource(href, lang, callback, function() {
-        consoleWarn(href + ' not found.');
-        applied = '';
-      });
-      return applied; // return lang if found, an empty string if not found
-    };
-  }
-
-  for (var i = 0; i < langCount; i++) {
-    var resource = new l10nResourceLink(langLinks[i]);
-    var rv = resource.load(lang, onResourceLoaded);
-    if (rv != lang) { // lang not found, used default resource instead
-      consoleWarn('"' + lang + '" resource not found');
-      gLanguage = '';
-    }
-  }
-}
 
 // clear all l10n data
 function clear() {
@@ -787,17 +714,13 @@ function substArguments(str, args) {
 module.exports = {
   // initialise the module.
   // loader should be a function(path, onSuccess, onFailure, asynchronous)
-  init: function(loader) {
-    if (typeof loader == function) {
-      gLoader=loader;
-    } else {
-      console.warn('Resource loader is not a function');
-    }
+  // basePath is the base path to add relative paths to when loading a resource.
+  init: function(basePath,loader) {
+    gBasePath = basePath;
+    gLoader = loader;
   },
-  // load a resource for a given language from a path.
-  loadResource: function(path,lang){
-    // call parseResource to do the work.
-  },
+  // load a resource for a given language from a relative path.
+  loadResource: parseResource,
   get: function(key,args,fallback) {
     var data = getL10nData(key, args) || fallback;
     if (data) { // XXX double-check this

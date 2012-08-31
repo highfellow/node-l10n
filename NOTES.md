@@ -2,13 +2,17 @@ Approximate Route
 =================
 
 * Convert l10n.js to nodejs module format.
-* Test it as simply as possible.
 * Split off the platform-independent code, and keep it here.
+* Define an API for the base library.
+(DONE)
+* Do the tricky stuff to make it work.
+* Write some test code for the base library.
 * Move the browser code to the browser adapter module (node-l10n-browser.)
-* Find a way to integrate the two halves. This module should just handle reading locale files, and translating tokens to their correct form. The browser module should have a similar API to webL10n, but with the ability to separate the locale loading stage from the translation stage. (I.e. generate two events, and make the second stage optional)
 * Write some simple test code for the browser.
-* Then write the dynamictemplate browser (dt-dom) plugin, and test this with the twelve days app.
-* Clean things up, and document it.
+* Clean things up, document it, and push to github.
+
+Once this is done, I can start integrating with dynamictemplate and the webclient:
+* Write a dynamictemplate browser (dt-dom) localisation plugin, and test this with the twelve days app.
 * Should then be ready to do the buddycloud webclient.
 * At some point, maybe write a file adapter?
 
@@ -16,19 +20,19 @@ API of the base library
 =======================
 
 The current API is like this:
-    get: function(key, args, fallback)
-    getData: function() - debug: return the dictionary
-    getText: function() - debug.
-    ~ getLanguage: function() - get current lang
-    ~ setLanguage: function(lang) - set current lang.
-    getDirection: function() 
-    ~ translate: function(element)
-    getReadyState: function()
+  get: function(key, args, fallback)
+  getData: function() - debug: return the dictionary
+  getText: function() - debug.
+  ~ getLanguage: function() - get current lang
+  ~ setLanguage: function(lang) - set current lang.
+  getDirection: function() 
+  ~ translate: function(element)
+  getReadyState: function()
 
 Out of these, the ones marked with ~ are browser-dependent. So put the others into the public API for the library, along with two other functions:
 
-    init: function(resourceLoader) - init the library, and set a resource loader function, which looks like function(path, onSuccess, onFailure, asynchronous).
-    loadResource(path, language) - use the loader function to load a resource file.
+  init: function(resourceLoader) - init the library, and set a resource loader function, which looks like function(path, onSuccess, onFailure, asynchronous).
+  loadResource(path, language) - use the loader function to load a resource file.
 
 Current Structure
 =================
