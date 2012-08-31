@@ -13,8 +13,8 @@ Approximate Route
 * Should then be ready to do the buddycloud webclient.
 * At some point, maybe write a file adapter?
 
-API
-===
+Current Structure
+=================
 The browser-independent code consists of:
 * var gL10nData - dictionary of parsed token rules. (For the current language I think. No caching of locale files atm.)
 * var gTextData
@@ -34,7 +34,6 @@ The browser-independent code consists of:
 * getL10nData(key, args) - get the translated string for a key, having applied the arguments.
 * substIndexes(str, args, key, prop) - substitute macros in a translated string.
 * substArguments(str, args) - substitute included arguments in a translated string.
-
 
 Browser-dependent functions:
 * loadLocale(lang,callback) - parses the document headers and loads all the included resource links.
