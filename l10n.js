@@ -72,6 +72,7 @@ function consoleWarn(message) {
  */
 
 function parseResource(href, lang, successCallback, failureCallback) {
+  var errors=false;
 
   // handle escaped characters (backslashes) in a string
   function evalString(text) {
@@ -128,7 +129,7 @@ function parseResource(href, lang, successCallback, failureCallback) {
           }
           if (reImport.test(line)) { // @import rule?
             match = reImport.exec(line);
-            loadImport(gBasePath + match[1]); // load the resource synchronously
+            loadImport(match[1]); // load the resource synchronously
           }
         }
 
@@ -143,7 +144,9 @@ function parseResource(href, lang, successCallback, failureCallback) {
     function loadImport(url) {
       gLoader(url, function(content) {
         parseRawLines(content, false); // don't allow recursive imports
-      }, false, false); // load synchronously
+      }, function(err) {
+        errors = true;
+      }, false); // load synchronously
     }
 
     // fill the dictionary
@@ -174,10 +177,15 @@ function parseResource(href, lang, successCallback, failureCallback) {
       }
       gL10nData[id][prop] = data[key];
     }
-
-    // trigger callback
-    if (successCallback)
-      successCallback();
+    
+    if (!errors) {
+      // trigger callback
+      if (successCallback)
+        successCallback();
+    } else {
+      if (failureCallback)
+        failureCallback();
+    }
   }, failureCallback, gAsyncResourceLoading);
 };
 
@@ -717,6 +725,11 @@ module.exports = {
     gLoader = loader;
   },
   // load a resource for a given language from a relative path the loader understands.
+  // arguments: 
+  // path - a relative path.
+  // lang - language to load from the resource.
+  // successCallback - called once a language has been loaded.
+  // failureCallback - called if loading fails.
   loadResource: parseResource,
   get: function(key,args,fallback) {
     var data = getL10nData(key, args) || fallback;

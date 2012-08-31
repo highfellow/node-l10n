@@ -26,6 +26,9 @@ function testLanguage(lang, callback) {
     console.log('Testing parameter substitution:');
     repeat('pink');
     callback && callback();
+  },
+  function(err) {
+    console.log('Failed to load data.properties');
   });
 }
 
@@ -43,11 +46,21 @@ l10n.init(function(path,success,failure,async) {
     });
   } else {
     // load synchronously (used for includes).
-    data = fs.readFileSync(path, 'utf-8');
+    try {
+      data = fs.readFileSync(path, 'utf-8');
+    } catch(err) {
+      console.log("Error loading resource file:", path, err);
+      failure && failure(err);
+      return(false);
+    }
     if (data && (data != '')) {
-      success(data);
+      success && success(data);
+    } else {
+      failure && failure(err);
+      return(false);
     }
   }
+  return(true);
 });
 
 // do the tests.
