@@ -51,16 +51,13 @@ l10n.init(function(path,success,failure,async) {
     } catch(err) {
       console.log("Error loading resource file:", path, err);
       failure && failure(err);
-      return(false);
     }
     if (data && (data != '')) {
       success && success(data);
     } else {
       failure && failure(err);
-      return(false);
     }
   }
-  return(true);
 });
 
 // do the tests.
