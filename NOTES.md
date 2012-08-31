@@ -4,10 +4,11 @@ Approximate Route
 * Convert l10n.js to nodejs module format.
 * Split off the platform-independent code, and keep it here.
 * Define an API for the base library.
-(DONE)
 * Do the tricky stuff to make it work.
 * Write some test code for the base library.
-* Move the browser code to the browser adapter module (node-l10n-browser.)
+(DONE)
+* Define an API for platform adapters (file and browser).
+* Write a browser adapter.
 * Write some simple test code for the browser.
 * Clean things up, document it, and push to github.
 
@@ -20,19 +21,47 @@ API of the base library
 =======================
 
 The current API is like this:
-  get: function(key, args, fallback)
-  getData: function() - debug: return the dictionary
-  getText: function() - debug.
-  ~ getLanguage: function() - get current lang
-  ~ setLanguage: function(lang) - set current lang.
-  getDirection: function() 
-  ~ translate: function(element)
-  getReadyState: function()
+  * get: function(key, args, fallback)
+  * getData: function() - debug: return the dictionary
+  * getText: function() - debug.
+  * ~ getLanguage: function() - get current lang
+  * ~ setLanguage: function(lang) - set current lang.
+  * getDirection: function() 
+  * ~ translate: function(element)
+  * getReadyState: function()
 
 Out of these, the ones marked with ~ are browser-dependent. So put the others into the public API for the library, along with two other functions:
 
-  init: function(resourceLoader) - init the library, and set a resource loader function, which looks like function(path, onSuccess, onFailure, asynchronous).
-  loadResource(path, language) - use the loader function to load a resource file.
+  * init: function(resourceLoader) - init the library, and set a resource loader function, which looks like function(path, onSuccess, onFailure, asynchronous).
+  * loadResource(path, language) - use the loader function to load a resource file.
+
+Adapter API
+===========
+
+The adapter just needs to define a loader function and initialise itself (e.g. for the browser adapter, it should get the base path from the URL by default). l10n should know how to get the loader function from the adapter.
+
+could do it this way:
+  l10n = require('l10n');
+  l10n-browser = require('l10n-browser');
+
+  l10n.init(l10n-browser);
+  // i.e. l10n.init expects an adapter object, which it knows has a member 'loader'
+
+another way would be more like dynamictemplate:
+  L10n = require('l10n');
+  L10n-browser = require('l10n-browser');
+
+  l10n = new L10n(new L10n-browser());
+  // i.e. both modules export a class with a constructor. This would allow you to pass args to the adapter in its constructor.
+
+  function success() \{
+    console.log("loaded resources");
+    console.log(l10n.get('token',\{'arg':value\},'fallback'));
+    \}
+
+  l10n.loadResource('data.properties', navigator.language, success, false);
+  
+2nd way seems neater.
 
 Current Structure
 =================
