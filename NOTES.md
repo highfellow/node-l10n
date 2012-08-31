@@ -41,13 +41,16 @@ Adapter API
 The adapter just needs to define a loader function and initialise itself (e.g. for the browser adapter, it should get the base path from the URL by default). l10n should know how to get the loader function from the adapter.
 
 could do it this way:
+```
   l10n = require('l10n');
   l10n-browser = require('l10n-browser');
 
   l10n.init(l10n-browser);
   // i.e. l10n.init expects an adapter object, which it knows has a member 'loader'
+```
 
 another way would be more like dynamictemplate:
+```
   L10n = require('l10n');
   L10n-browser = require('l10n-browser');
 
@@ -60,6 +63,7 @@ another way would be more like dynamictemplate:
     \}
 
   l10n.loadResource('data.properties', navigator.language, success, false);
+```
   
 2nd way seems neater.
 
