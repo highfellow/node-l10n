@@ -142,7 +142,7 @@ function parseResource(href, lang, successCallback, failureCallback) {
 
     // import another *.properties file
     function loadImport(url) {
-      loadResource(url, function(content) {
+      gLoader(url, function(content) {
         parseRawLines(content, false); // don't allow recursive imports
       }, false, false); // load synchronously
     }
@@ -714,12 +714,10 @@ function substArguments(str, args) {
 module.exports = {
   // initialise the module.
   // loader should be a function(path, onSuccess, onFailure, asynchronous)
-  // basePath is the base path to add relative paths to when loading a resource.
-  init: function(basePath,loader) {
-    gBasePath = basePath;
+  init: function(loader) {
     gLoader = loader;
   },
-  // load a resource for a given language from a relative path.
+  // load a resource for a given language from a relative path the loader understands.
   loadResource: parseResource,
   get: function(key,args,fallback) {
     var data = getL10nData(key, args) || fallback;
@@ -739,5 +737,4 @@ module.exports = {
   },
   getReadyState: function() { return gReadyState; }
 }
-                                 },
 
