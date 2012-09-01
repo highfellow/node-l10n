@@ -37,3 +37,8 @@ Usage
 For more information on using 'get', and on the format of the resource files, see: <https://github.com/fabi1cazenave/webL10n>.
 
 For some example code, see the file adapter module <https://github.com/highfellow/node-l10n-file>.
+
+LICENSE
+=======
+
+BSD/MIT/WTFPL license. Use at your own risk.
