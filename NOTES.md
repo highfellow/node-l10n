@@ -57,10 +57,10 @@ another way would be more like dynamictemplate:
   l10n = new L10n(new L10n-browser());
   // i.e. both modules export a class with a constructor. This would allow you to pass args to the adapter in its constructor.
 
-  function success() \{
+  function success() {
     console.log("loaded resources");
-    console.log(l10n.get('token',\{'arg':value\},'fallback'));
-    \}
+    console.log(l10n.get('token',{'arg':value},'fallback'));
+    }
 
   l10n.loadResource('data.properties', navigator.language, success, false);
 ```
