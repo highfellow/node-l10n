@@ -1,9 +1,9 @@
 node-l10n
 =========
 
-A localisation module for nodejs based on <https://github.com/fabi1cazenave/webL10n>. This is the core translation engine only, ported to nodejs in a way that is platform-neutral. The browser-dependent code will go into node-l10n-browser (TODO).
+A localisation module for nodejs based on <https://github.com/fabi1cazenave/webL10n>. This is the core translation engine only, ported to nodejs in a way that is platform-neutral. The platform-dependent code is in separate adapter modules - node-l10n-file for the filesystem under nodejs, and node-l10n-browser for the browser.
 
-To use this module, you need to choose an adapter that is suitable for your application (e.g. browser or filesystem). The adapter handles loading localisation resource files; everything else is in this module.
+To use this module, you need to choose an adapter that is suitable for your application. The adapter handles loading localisation resource files; everything else is in this module.
 
 API
 ===
