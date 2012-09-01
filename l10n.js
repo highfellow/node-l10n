@@ -745,6 +745,7 @@ function L10n(adapter) {
     var rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
     return (rtlList.indexOf(gLanguage) >= 0) ? 'rtl' : 'ltr';
   };
+  // TODO - is getReadyState needed without the browser code?
   this.getReadyState = function() { return gReadyState; };
   gLoader = adapter.getLoader();
 }

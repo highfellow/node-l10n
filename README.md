@@ -3,40 +3,37 @@ node-l10n
 
 A localisation module for nodejs based on <https://github.com/fabi1cazenave/webL10n>. This is the core translation engine only, ported to nodejs in a way that is platform-neutral. The browser-dependent code will go into node-l10n-browser (TODO).
 
-See test/test.js for the API. (will write this up properly later).
+To use this module, you need to choose an adapter that is suitable for your application (e.g. browser or filesystem). The adapter handles loading localisation resource files; everything else is in this module.
 
-Results from the test:
+API
+===
+
+Initialisation
+--------------
+
+The module exports a function object, L10n, which takes an adapter object as its parameter.
 
 ```
-[andy@monkey test]$ node test.js 
+// load the modules.
+var L10n = require('l10n');
+var L10n_File = require('../l10n-file.js');
 
-Testing in language: en
-=======================
-
-Standard version:
-   No quick brown foxes jumped over the lazy dog.
-   A quick brown fox jumped over the lazy dog.
-   2 quick brown foxes jumped over the lazy dog.
-   3 quick brown foxes jumped over the lazy dog.
-
-Testing parameter substitution:
-   No quick pink foxes jumped over the lazy dog.
-   A quick pink fox jumped over the lazy dog.
-   2 quick pink foxes jumped over the lazy dog.
-   3 quick pink foxes jumped over the lazy dog.
-
-Testing in language: de
-=======================
-
-Standard version:
-   Keine schnelle braune Fuchsen sprang über den faulen Hund.
-   Eine schnelle braune Fuchs sprang über den faulen Hund.
-   2 schnelle braune Fuchsen sprang über den faulen Hund.
-   3 schnelle braune Fuchsen sprang über den faulen Hund.
-
-Testing parameter substitution:
-   Keine schnelle rosa Fuchsen sprang über den faulen Hund.
-   Eine schnelle rosa Fuchs sprang über den faulen Hund.
-   2 schnelle rosa Fuchsen sprang über den faulen Hund.
-   3 schnelle rosa Fuchsen sprang über den faulen Hund.
+// initialise a new l10n object.
+var l10n = new L10n(new L10n_File());
 ```
+
+Methods
+-------
+
+An L10n object has the following methods, for loading resource files, and translating strings.
+
+  * loadResource: function(path, language, successCallback, failureCallback) - Load a language resource - e.g. a properties file. The meaning of 'path' depends on the adapter you are using, and is usually relative to your current path (e.g. an URL).
+  * get: function(key, args, fallback) - Return the translation for 'key'. Args contains a dictionary of tokens to replce in the translated string. Fallback is used as the string if no translation is found. This works the same as in webL10n.
+  * getDirection: function() - utility function to get the direction of the current language.
+
+Usage
+-----
+
+For more information on using 'get', and on the format of the resource files, see: <https://github.com/fabi1cazenave/webL10n>.
+
+For some example code, see the file adapter module <https://github.com/highfellow/node-l10n-file>.
