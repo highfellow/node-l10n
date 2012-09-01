@@ -64,8 +64,9 @@ another way would be more like dynamictemplate:
 
   l10n.loadResource('data.properties', navigator.language, success, false);
 ```
-  
-2nd way seems neater.
+
+Implementing the second method.
+
 
 Current Structure
 =================

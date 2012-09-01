@@ -718,35 +718,36 @@ function substArguments(str, args) {
   return str;
 }
 
-module.exports = {
-  // initialise the module.
-  // loader should be a function(path, onSuccess, onFailure, asynchronous). See test/test.js for an example using node filesystem.
-  init: function(loader) {
-    gLoader = loader;
-  },
+function L10n(adapter) {
+  // Function object for handling translation API.
+  // TODO - could move the global variables into this object.
+
   // load a resource for a given language from a relative path the loader understands.
   // arguments: 
   // path - a relative path.
   // lang - language to load from the resource.
   // successCallback - called once a language has been loaded.
   // failureCallback - called if loading fails.
-  loadResource: parseResource,
-  get: function(key,args,fallback) {
+  this.loadResource = parseResource;
+  this.get = function(key,args,fallback) {
     var data = getL10nData(key, args) || fallback;
     if (data) { // XXX double-check this
       return 'textContent' in data ? data.textContent : '';
     }
     return '{{' + key + '}}';
-  },
-  getData: function() { return gL10nData;},
-  getText: function() { return gTextData;},
+  };
+  this.getData = function() { return gL10nData;};
+  this.getText = function() { return gTextData;};
   // get the direction (ltr|rtl) of the current language
-  getDirection: function() {
+  this.getDirection = function() {
     // http://www.w3.org/International/questions/qa-scripts
     // Arabic, Hebrew, Farsi, Pashto, Urdu
     var rtlList = ['ar', 'he', 'fa', 'ps', 'ur'];
     return (rtlList.indexOf(gLanguage) >= 0) ? 'rtl' : 'ltr';
-  },
-  getReadyState: function() { return gReadyState; }
+  };
+  this.getReadyState = function() { return gReadyState; };
+  gLoader = adapter.getLoader();
 }
 
+// export the L10n function object as the API.
+module.exports = L10n;
