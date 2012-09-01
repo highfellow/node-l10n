@@ -13,7 +13,7 @@
   "dependencies": {
   },
   "main": "l10n.js",
-  "keywords": ["localisation"],
+  "keywords": ["l10n","localisation"],
   "scripts": {
   },
   "devDependencies": {
