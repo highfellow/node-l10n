@@ -1,7 +1,7 @@
 node-l10n
 =========
 
-**PLEASE NOTE - this module is now redundant, and has been replaced by a similar module using [requirejs](https://github.com/highfellow/js-l10n). It has not been tested in a real application, and is posted here for reference only.**
+**PLEASE NOTE - this module is now redundant, and has been replaced by a similar [module](https://github.com/highfellow/js-l10n) using [requirejs](http://requirejs.org/) for module loading. It has not been tested in a real application, and is posted here for reference only.**
 
 A localisation module for nodejs based on <https://github.com/fabi1cazenave/webL10n>. This is the core translation engine only, ported to nodejs in a way that is platform-neutral. The platform-dependent code is in separate adapter modules - <https://github.com/highfellow/node-l10n-file> for the filesystem under nodejs, and <https://github.com/highfellow/node-l10n-browser> for the browser.
 
